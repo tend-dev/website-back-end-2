@@ -1,6 +1,7 @@
 /node_modules
 /.idea
 /mySql/mysql-data
+/MariaDB/mysql-data
 .env
 dist
 uploads
