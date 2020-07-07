@@ -38,6 +38,7 @@ const file = require('./file');
 const middleware = require('./middleware');
 
 app.use(express.static('uploads'));
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
@@ -97,12 +98,6 @@ app.post('/api/user', middleware.checkToken, (req, res) => {
     });
 });
 
-app.get('/api/login', (req, res) => {
-    auth.login(req.query).then(r => {
-        res.send(JSON.stringify(req.query) + r);
-    });
-});
-
 app.post('/api/login', (req, res) => {
     console.log('req.body ', req.body);
     auth.login(req.body).then(r => {
@@ -112,6 +107,25 @@ app.post('/api/login', (req, res) => {
             res.status(400).json({success: false, error: 'Bad request'});
         }
     });
+});
+
+const allowedExt = [
+    '.js',
+    '.ico',
+    '.css',
+    '.png',
+    '.jpg',
+    '.woff2',
+    '.woff',
+    '.ttf',
+    '.svg',
+];
+app.get('/*', function (req, res) {
+    if (allowedExt.filter(ext => req.url.indexOf(ext) > 0).length > 0) {
+        res.sendFile(__dirname + '/frontend/' + req.url);
+    } else {
+        res.sendFile(__dirname + '/frontend/index.html');
+    }
 });
 
 app.listen(process.env.PORT || 3000);
