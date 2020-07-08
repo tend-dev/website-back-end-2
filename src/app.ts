@@ -104,7 +104,7 @@ app.post('/api/login', (req, res) => {
         if (r) {
             res.send({ token: r });
         } else {
-            res.status(400).json({success: false, error: 'Bad request'});
+            res.status(401).json({success: false, error: 'Unauthorized'});
         }
     });
 });
