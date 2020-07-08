@@ -25,12 +25,14 @@ const DAO = {
         }
         return blog;
     },
-    async getBlogByPage({ page = 1, perPage = 10 }): Promise<IBlog[]> {
+    async getBlogByPage({ page = 1, perPage = 10, sort = 'asc' }): Promise<IBlog[]> {
+        const type = sort === 'asc' ? 'asc' : 'desc';
         let blogs: IBlog[] = await knex('blogs')
             .select('blogs.*', 'i.path as image', 'i2.path as thumbnail')
             .leftJoin('images as i', 'i.id', 'blogs.image')
             .leftJoin('images as i2', 'i2.id', 'blogs.thumbnail')
             .limit(perPage)
+            .orderBy('createdAt', type)
             .offset((page - 1) * perPage);
         blogs.forEach(b => {
             b.created = Date.parse(b.createdAt);

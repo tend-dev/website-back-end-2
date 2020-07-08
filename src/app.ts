@@ -109,23 +109,12 @@ app.post('/api/login', (req, res) => {
     });
 });
 
-const allowedExt = [
-    '.js',
-    '.ico',
-    '.css',
-    '.png',
-    '.jpg',
-    '.woff2',
-    '.woff',
-    '.ttf',
-    '.svg',
-];
+app.get('/*.*', function (req, res) {
+    res.sendFile(__dirname + '/frontend/' + req.url);
+});
+
 app.get('/*', function (req, res) {
-    if (allowedExt.filter(ext => req.url.indexOf(ext) > 0).length > 0) {
-        res.sendFile(__dirname + '/frontend/' + req.url);
-    } else {
-        res.sendFile(__dirname + '/frontend/index.html');
-    }
+    res.sendFile(__dirname + '/frontend/index.html');
 });
 
 app.listen(process.env.PORT || 3000);
