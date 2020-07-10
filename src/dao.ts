@@ -1,5 +1,6 @@
 import { IBlog, INewBlog, IUser } from './models';
 const knex = require('./knex');
+const file = require('./file');
 const bcrypt = require('bcrypt');
 const saltRounds = 13;
 
@@ -9,6 +10,7 @@ const DAO = {
         if (!blog.title || !blog.content) {
             return null;
         }
+        blog.content = await file.catchBaseImage(blog.content);
         const id = (await knex('blogs').insert(this.getBlogData(blog, userId)))[0];
         return this.getBlogById(id);
     },
@@ -41,6 +43,7 @@ const DAO = {
         return blogs;
     },
     async updateBlog(id: string, blog: INewBlog): Promise<number> {
+        blog.content = await file.catchBaseImage(blog.content);
         await knex('blogs').update(this.getBlogData(blog, blog.author)).where({ id });
         return this.getBlogById(id);
     },
