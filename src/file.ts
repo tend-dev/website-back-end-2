@@ -1,5 +1,4 @@
 import { IBlogImages } from './models';
-import exp = require('constants');
 
 const fs = require('fs');
 const knex = require('./knex');
@@ -40,10 +39,8 @@ exports.catchBaseImage = async (data: string): Promise<string> => {
         fs.writeFile(imgName, getBase64Data(chunk), 'base64',  function(err) {
             console.log(err);
         });
-        const id = await this.storeFile(imgName);
-        // todo add path
-        chunk.replace(regexp2, `"${imgName}"`)
-
+        // const id = await this.storeFile(imgName);
+        chunk.replace(regexp2, `"${process.env.PATH}/${imgName}"`)
     });
 
     return data;
