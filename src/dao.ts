@@ -1,17 +1,34 @@
-import { IBlog, INewBlog, IUser } from './models';
+import { IBlog, IContentAndImages, INewBlog, IUser } from './models';
 const knex = require('./knex');
 const file = require('./file');
 const bcrypt = require('bcrypt');
 const saltRounds = 13;
 
 const DAO = {
+    async updateBlogImages(blogId: string, images: string[]) {
+        const ids = (await knex('blog-images').select('id').where({ blogId })).map(d => d.id);
+        // store to index field - blogId where image being placed in past
+        await knex('blog-images').update({ blogId: null, index: blogId }).whereIn('id', ids);
+
+        if (!images || images.length < 1) {
+            return;
+        }
+        const data = [];
+        images.forEach((name, index) => {
+            data.push({ name, index, blogId });
+        });
+        await knex('blog-images').insert(data);
+        return data;
+    },
     async createBlog(blog: INewBlog, { userId }) {
         console.log(blog, userId);
         if (!blog.title || !blog.content) {
             return null;
         }
-        blog.content = await file.catchBaseImage(blog.content);
+        const data: IContentAndImages = await file.catchBaseImage(blog.content);
+        blog.content = data.content;
         const id = (await knex('blogs').insert(this.getBlogData(blog, userId)))[0];
+        this.updateBlogImages(id, data.images);
         return this.getBlogById(id);
     },
     async getBlogById(id: string): Promise<IBlog> {
@@ -43,7 +60,9 @@ const DAO = {
         return blogs;
     },
     async updateBlog(id: string, blog: INewBlog): Promise<number> {
-        blog.content = await file.catchBaseImage(blog.content);
+        const data: IContentAndImages = await file.catchBaseImage(blog.content);
+        blog.content = data.content;
+        this.updateBlogImages(id, data.images);
         await knex('blogs').update(this.getBlogData(blog, blog.author)).where({ id });
         return this.getBlogById(id);
     },

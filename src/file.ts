@@ -1,4 +1,4 @@
-import { IBlogImages } from './models';
+import { IBlogImages, IContentAndImages } from './models';
 
 const fs = require('fs');
 const knex = require('./knex');
@@ -22,15 +22,16 @@ exports.getBlogImages = async ({ path, originalname, filename }): Promise<IBlogI
     });
 };
 
-exports.catchBaseImage = async (data: string): Promise<string> => {
+exports.catchBaseImage = async (data: string): Promise<IContentAndImages> => {
     const regexp = /\"data:image\//;
     const regexp2 = /.*;base64,.*\"/;
 
     const raw = data.split(regexp);
     if (raw.length < 2) {
-        return data;
+        return { content: data, images: [] };
     }
     const arr = [raw[0]];
+    const images = [];
 
     raw.slice(1).forEach(async chunk => {
         const imgName = `inner-image-${Date.now()}.${getExt(chunk)}`;
@@ -40,10 +41,11 @@ exports.catchBaseImage = async (data: string): Promise<string> => {
         });
         chunk = chunk.replace(regexp2, `"${process.env.URL}:${process.env.PORT}/${imgName}"`)
         arr.push(chunk);
+        images.push(imgName);
     });
 
     // console.log('content: ', arr.join(''));
-    return arr.join('');
+    return { content: arr.join(''), images };
 };
 
 const getExt = (data: string): string => {

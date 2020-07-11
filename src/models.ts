@@ -28,3 +28,8 @@ export interface IBlogImages {
     image: string;
     thumbnail: string;
 }
+
+export interface IContentAndImages {
+    content: string;
+    images: string[];
+}

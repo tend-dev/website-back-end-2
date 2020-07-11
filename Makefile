@@ -7,5 +7,8 @@ down:
 create:
 	knex migrate:make $(n)
 
+cur:
+	knex migrate:currentVersion
+
 com:
 	ls $(a)
