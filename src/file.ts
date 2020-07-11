@@ -23,34 +23,33 @@ exports.getBlogImages = async ({ path, originalname, filename }): Promise<IBlogI
 };
 
 exports.catchBaseImage = async (data: string): Promise<string> => {
-    // const regexp = /\"data:image\/.*;base64,/;
     const regexp = /\"data:image\//;
-    const regexp2 = /\"data:image\/.*;base64,.*\"/;
+    const regexp2 = /.*;base64,.*\"/;
 
     const raw = data.split(regexp);
     if (raw.length < 2) {
         return data;
     }
-    const arr = raw.slice(1);
+    const arr = [raw[0]];
 
-    arr.forEach(async chunk => {
+    raw.slice(1).forEach(async chunk => {
         const imgName = `inner-image-${Date.now()}.${getExt(chunk)}`;
-
-        fs.writeFile(imgName, getBase64Data(chunk), 'base64',  function(err) {
+        const path = `uploads/${imgName}`;
+        fs.writeFile(path, getBase64Data(chunk), 'base64',  function(err) {
             console.log(err);
         });
-        // const id = await this.storeFile(imgName);
-        chunk.replace(regexp2, `"${process.env.PATH}/${imgName}"`)
+        chunk = chunk.replace(regexp2, `"${process.env.URL}:${process.env.PORT}/${imgName}"`)
+        arr.push(chunk);
     });
 
-    return data;
+    // console.log('content: ', arr.join(''));
+    return arr.join('');
 };
 
 const getExt = (data: string): string => {
-    return data.split(';').pop();
+    return data.split(';')[0];
 };
 
 const getBase64Data = (data: string): string => {
-    const base64Data = data.split('"').pop().replace(/.*;base64,/, '');
-    return base64Data;
+    return data.split('"')[0].replace(/.*;base64,/, '');
 };
