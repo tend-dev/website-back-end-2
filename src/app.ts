@@ -55,12 +55,12 @@ app.post('/api/blog', middleware.checkToken, upload.single("image"), async (req,
     }
 });
 
-app.get('/api/blog/:id', middleware.checkToken, async (req, res) => {
+app.get('/api/blog/:id', async (req, res) => {
     const blog = await dao.getBlogById(req.params.id);
     res.send(JSON.stringify(blog));
 });
 
-app.get('/api/blog', middleware.checkToken, async (req, res) => {
+app.get('/api/blog', async (req, res) => {
     const blogs = await dao.getBlogByPage(req.query);
     res.send(JSON.stringify(blogs));
 });

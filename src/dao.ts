@@ -33,9 +33,10 @@ const DAO = {
     },
     async getBlogById(id: string): Promise<IBlog> {
         const blog = (await knex('blogs')
-                .select('blogs.*', 'i.path as image', 'i2.path as thumbnail')
+                .select('blogs.*', 'i.path as image', 'i2.path as thumbnail', 'u.name as authorName')
                 .leftJoin('images as i', 'i.id', 'blogs.image')
                 .leftJoin('images as i2', 'i2.id', 'blogs.thumbnail')
+                .leftJoin('users as u', 'u.id', 'blogs.author')
                 .where({ 'blogs.id': id })
         )[0] || null;
         if (blog) {
@@ -47,9 +48,10 @@ const DAO = {
     async getBlogByPage({ page = 1, perPage = 10, sort = 'asc' }): Promise<IBlog[]> {
         const type = sort === 'asc' ? 'asc' : 'desc';
         let blogs: IBlog[] = await knex('blogs')
-            .select('blogs.*', 'i.path as image', 'i2.path as thumbnail')
+            .select('blogs.*', 'i.path as image', 'i2.path as thumbnail', 'u.name as authorName')
             .leftJoin('images as i', 'i.id', 'blogs.image')
             .leftJoin('images as i2', 'i2.id', 'blogs.thumbnail')
+            .leftJoin('users as u', 'u.id', 'blogs.author')
             .limit(perPage)
             .orderBy('createdAt', type)
             .offset((page - 1) * perPage);

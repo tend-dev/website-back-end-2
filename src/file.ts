@@ -11,7 +11,7 @@ exports.storeFile = async (path: string): Promise<string> => {
 exports.getBlogImages = async ({ path, originalname, filename }): Promise<IBlogImages> => {
     return new Promise(async (resolve, reject) => {
         const name = originalname.split('.');
-        const thName = name[0] + '_th.' + name[1];
+        const thName = name[0] + '-' + Date.now() + '-th.' + name[1];
         const outputFilePath = path.split('/')[0] + '/' + thName;
         sharp(path).resize({ width:320, height:240}).toFile(outputFilePath)
             .then(async (newFileInfo) => {
