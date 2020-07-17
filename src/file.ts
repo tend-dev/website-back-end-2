@@ -24,7 +24,7 @@ exports.getBlogImages = async ({ path, originalname, filename }): Promise<IBlogI
 
 exports.catchBaseImage = async (data: string): Promise<IContentAndImages> => {
     const regexp = /\"data:image\//;
-    const regexp2 = /.*;base64,.*\"/;
+    const regexp2 = /.*;base64,.*=\">/;
 
     const raw = data.split(regexp);
     if (raw.length < 2) {
@@ -39,7 +39,7 @@ exports.catchBaseImage = async (data: string): Promise<IContentAndImages> => {
         fs.writeFile(path, getBase64Data(chunk), 'base64',  function(err) {
             console.log(err);
         });
-        chunk = chunk.replace(regexp2, `"${process.env.URL}:${process.env.PORT}/${imgName}"`)
+        chunk = chunk.replace(regexp2, `"${process.env.URL}:${process.env.PORT}/${imgName}">`);
         arr.push(chunk);
         images.push(imgName);
     });

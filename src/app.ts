@@ -1,4 +1,4 @@
-import { IBlogImages } from './models';
+import { IBlogImages, IEmailData } from './models';
 
 const dotenv = require('dotenv');
 dotenv.load({ path: '.env' });
@@ -35,7 +35,9 @@ const upload = multer({
 const dao = require('./dao');
 const auth = require('./auth');
 const file = require('./file');
+const mail = require('./email');
 const middleware = require('./middleware');
+mail.init();
 
 app.use(express.static('uploads'));
 
@@ -108,6 +110,14 @@ app.post('/api/login', (req, res) => {
         }
     });
 });
+
+app.post('/api/contact-form', (req, res) => {
+    console.log('contact-form: ', req.body);
+    mail.sendEmail(req.body as IEmailData).then(r => {
+        res.send(JSON.stringify(r));
+    });
+});
+
 
 app.get('/*.*', function (req, res) {
     res.sendFile(__dirname + '/frontend/' + req.url);

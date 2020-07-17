@@ -33,3 +33,12 @@ export interface IContentAndImages {
     content: string;
     images: string[];
 }
+
+export interface IEmailData {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    message: string;
+    toEmail?: string;
+}
