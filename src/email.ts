@@ -8,7 +8,11 @@ exports.init = async () => {
     const pass = process.env.MAIL_PASS || acc.pass;
 
     transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        ignoreTLS: false,
+        secure: false,
+        // service: 'gmail',
         auth: { user, pass }
     });
 };
