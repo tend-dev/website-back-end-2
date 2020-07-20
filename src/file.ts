@@ -13,7 +13,7 @@ exports.getBlogImages = async ({ path, originalname, filename }): Promise<IBlogI
         const name = originalname.split('.');
         const thName = name[0] + '-' + Date.now() + '-th.' + name[1];
         const outputFilePath = path.split('/')[0] + '/' + thName;
-        sharp(path).resize({ width:320, height:240}).toFile(outputFilePath)
+        sharp(path).resize({ width:440, height:330}).toFile(outputFilePath)
             .then(async (newFileInfo) => {
                 const image = await this.storeFile(filename);
                 const thumbnail = await this.storeFile(thName);
