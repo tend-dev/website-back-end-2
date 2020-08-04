@@ -11,8 +11,9 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
 
-const key = fs.readFileSync(__dirname + '/../cert/privkey.pem');
-const cert = fs.readFileSync(__dirname + '/../cert/cert.pem');
+const path = __dirname + process.env.PATH_TO_CERT;
+const key = fs.readFileSync(path + '/privkey.pem');
+const cert = fs.readFileSync(path + '/cert.pem');
 const options = { key, cert };
 const port = process.env.PORT || 3000;
 
