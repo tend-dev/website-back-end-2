@@ -9,6 +9,7 @@ module.exports.login = ({ email, pass }): Promise<string> => {
     return new Promise((resolve, reject) => {
         if(!email || !pass) {
             resolve(null);
+            return;
         }
         dao.getUserByEmail(email).then((user: IUser) => {
             if (!user) {

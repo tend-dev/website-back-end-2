@@ -3,10 +3,18 @@ import { IBlogImages, IEmailData } from './models';
 const dotenv = require('dotenv');
 dotenv.load({ path: '.env' });
 
+const https = require('https');
+const fs = require('fs');
+const helmet = require('helmet');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const app = express();
+
+const key = fs.readFileSync(__dirname + '/../cert/privkey.pem');
+const cert = fs.readFileSync(__dirname + '/../cert/cert.pem');
+const options = { key, cert };
+const port = process.env.PORT || 3000;
 
 const multer  = require("multer");
 const storage = multer.diskStorage({
@@ -40,6 +48,7 @@ const middleware = require('./middleware');
 mail.init();
 
 app.use(express.static('uploads'));
+app.use(helmet());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -127,4 +136,10 @@ app.get('/*', function (req, res) {
     res.sendFile(__dirname + '/frontend/index.html');
 });
 
-app.listen(process.env.PORT || 3000);
+const server = https.createServer(options, app);
+server.listen(port, () => {
+    console.log("server starting on port : " + port)
+});
+
+// for http only
+// app.listen(process.env.PORT || 3000);
