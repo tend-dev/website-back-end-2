@@ -5,7 +5,6 @@ dotenv.load({ path: '.env' });
 
 const https = require('https');
 const fs = require('fs');
-const helmet = require('helmet');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -49,7 +48,6 @@ const middleware = require('./middleware');
 mail.init();
 
 app.use(express.static('uploads'));
-app.use(helmet());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
